@@ -1,0 +1,105 @@
+{
+  "name": "Article2Notion (Content Pipeline)",
+  "nodes": [
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"original_content\": \"User original input\",\n  \"rewritten_content\": \"AI-generated professional content\",\n  \"status\": \"Drafting\",\n  \"platform\": \"Threads/LinkedIn\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [16, -272],
+      "name": "Parser: Content Structure"
+    },
+    {
+      "parameters": {
+        "workflowId": "379rCPBTMbbpvnLl",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [1120, -592],
+      "name": "Invoke: Notion2Public"
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "databaseId": "28277348-359f-80f4-a34c-ed08295f6945",
+        "title": "={{ $('Agent: Content Rewriter').item.json.output['original_content'] }}",
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Rewritten Content|rich_text",
+              "textContent": "={{ $('Agent: Content Rewriter').item.json.output['rewritten_content'] }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [672, -496],
+      "name": "Notion: Article Database"
+    },
+    {
+      "parameters": {
+        "url": "https://www.googleapis.com/customsearch/v1",
+        "queryParameters": {
+          "parameters": [
+            { "name": "q", "value": "={{ $json.q }}" },
+            { "name": "cx", "value": "83df6ebadd8084cbc" }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-576, -688],
+      "name": "HTTP: Google Search News"
+    },
+    {
+      "parameters": {
+        "jsCode": "const topic = ($input.first().json.data.Topic || '').toUpperCase();\nconst queries = {\n  \"SA\": `\"system analysis\" OR \"workflow architecture\"`,\n  \"BA\": `\"business analysis\" OR \"process improvement\"`,\n  \"AI\": `\"AI automation\" OR \"generative AI\"`,\n  \"n8n\": `\"n8n automation\" OR \"workflow automation\"`\n};\nconst q = queries[topic] || `\"AI automation\"`;\nreturn [{ json: { topic, q } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-800, -688],
+      "name": "Code: Keyword Mapper"
+    },
+    {
+      "parameters": {
+        "conditions": [
+          {
+            "leftValue": "={{ $json.message.from.id }}",
+            "rightValue": 8308632587,
+            "operator": { "type": "number", "operation": "equals" }
+          }
+        ]
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [-576, -400],
+      "name": "Filter: Identity Verification"
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "message": "=Confirm publishing the following content:\n\n{{ $json.output['rewritten_content'] }}"
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [224, -496],
+      "name": "Telegram: Approval Request"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message || $json.chatInput }}",
+        "options": {
+          "systemMessage": "You are Jason, a Senior Systems Analyst. Rewrite the input into a professional, concise LinkedIn post. Voice: Thoughtful, observation-based, no hype. Language: American English."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [-128, -496],
+      "name": "Agent: Content Rewriter"
+    }
+  ]
+}

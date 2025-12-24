@@ -1,0 +1,134 @@
+{
+  "name": "Notion2Public (Distribution Layer)",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [-2368, 496],
+      "id": "edbc60ed-cd16-4027-8690-fad3f6345a43",
+      "name": "Manual Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": "IA0zmXegKaSc9Yzg",
+        "filters": {
+          "conditions": [{ "keyName": "Platform", "keyValue": "Threads" }]
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [-1248, 96],
+      "name": "Fetch Auth Token"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "Token",
+              "value": "={{ $json.Token }}",
+              "type": "string"
+            },
+            {
+              "name": "threads_id",
+              "value": "24805068685790736",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [-1024, 96],
+      "name": "Set Platform Params"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "name": "page_id", "value": "={{ $json.id }}", "type": "string" },
+            {
+              "name": "rewritten_content",
+              "value": "={{ $json.properties['Rewritten Content'].rich_text[0].text.content }}",
+              "type": "string"
+            },
+            {
+              "name": "fb_published_time",
+              "value": "={{ $json.properties['FB Published Time'].date }}",
+              "type": "object"
+            },
+            {
+              "name": "threads_published_time",
+              "value": "={{ $json.properties['Threads Published Time'].date }}",
+              "type": "string"
+            },
+            {
+              "name": "linkedin_published_time",
+              "value": "={{ $json.properties['LinkedIn Published Time'].date }}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [-1920, 400],
+      "name": "Buffer Pending Articles"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.threads.net/v1.0/{{ $('Set Platform Params').item.json.threads_id }}/threads",
+        "bodyParameters": {
+          "parameters": [
+            { "name": "media_type", "value": "TEXT" },
+            {
+              "name": "text",
+              "value": "={{ $('Parse Multi-segment Text').item.json.text }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [448, -112],
+      "name": "Threads: Create Draft"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Split content by '---' and add numbering\nconst content = $input.first().json.message.content || \"\";\nconst parts = content.split(/---+/g).map(t => t.trim()).filter(Boolean);\nconst total = parts.length;\nreturn parts.map((t, i) => ({ json: { text: `${t}\\n(${i + 1}/${total})` } }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-448, 96],
+      "name": "Parse Multi-segment Text"
+    },
+    {
+      "parameters": {
+        "messages": {
+          "values": [
+            {
+              "content": "=Segment the following article naturally by tone and paragraph. Insert '---' as a separator between segments. Content: {{ $('Buffer Pending Articles').item.json['rewritten_content'] }}"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [-800, 96],
+      "name": "AI Content Segmentation"
+    },
+    {
+      "parameters": {
+        "chatId": "8308632587",
+        "text": "Workflow Execution Successful"
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [672, 96],
+      "name": "Notify Success via Telegram"
+    }
+  ]
+}
