@@ -11,7 +11,7 @@ I am a **Senior IT Systems Analyst** and **Certified Business Analysis Professio
 ## 🛠️ Core Technical Stack
 * **Workflow Orchestration:** n8n (Advanced Parent-Child patterns, Agentic Workflows)
 * **Data & CRM:** SQL, Salesforce, REST APIs integration
-* **Cloud & AI:** Microsoft Azure AI, OpenAI (GPT-4/RAG)
+* **Cloud & AI:** Microsoft Azure AI, OpenAI
 * **Legacy & Systems:** VB.NET, C#, Core Banking Systems upgrade experience
 
 ## 📂 Featured Projects
