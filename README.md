@@ -34,4 +34,3 @@ I am passionate about using automation and AI to turn complex analysis into real
 
 * **LinkedIn:** [Yu-Ta (Jason) Chuang](https://www.linkedin.com/in/yu-ta-chuang-10115a108)
 * **Email:** yuta.chuang0818@gmail.com
-* **Location:** Taiwan (Relocating to the US - EB-5 Applicant)
