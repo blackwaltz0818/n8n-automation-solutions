@@ -22,10 +22,10 @@ A modular, scalable system for topic discovery, AI-assisted content generation, 
 * **Key Design:** Decoupled architecture using parent-child workflows for long-term maintainability.
 * **Tech:** n8n, OpenAI, Notion.
 
-### ⚡ AI-Powered Personal Workflow Assistant (Coming Soon)
-A conversational AI assistant that centralizes daily productivity tasks and knowledge management.
-* **Key Design:** Integrated messaging interface with RAG-based internal knowledge retrieval.
-* **Tech:** n8n, Slack/Discord, Vector Databases.
+### 🤖 [Multimodal AI Personal Assistant](./AI-Personal-Assistant)
+A cross-platform AI agent integrated with LINE that centralizes productivity and language learning through multimodal interaction.
+* **Key Design:** Multimodal processing (Voice-to-Text & OCR) with Agentic tool use for smart calendar orchestration.
+* **Tech:** n8n, LINE API, OpenAI (GPT-4o Vision & Whisper), Google Calendar (MCP), Notion.
 
 ---
 
