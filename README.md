@@ -1,33 +1,37 @@
-# AI-Driven Content Automation & Multi-Platform Publishing System
+# n8n Automation & AI Solutions Architect
 
-## 🚀 Executive Summary
-Designed and implemented an enterprise-grade automation system that transforms manual content creation into a scalable, AI-assisted pipeline. This project demonstrates a **modular "Parent-Child" architecture** using n8n, enabling seamless content generation, centralized management, and multi-platform distribution.
+Welcome to my automation portfolio. This repository showcases enterprise-grade workflows and AI-driven solutions designed to bridge the gap between complex business requirements and technical execution.
 
-## 🛠️ Tech Stack
-- **Orchestration:** n8n (Advanced Parent-Child Workflow Pattern)
-- **AI Engine:** OpenAI (GPT-4) with standardized prompt engineering
-- **Persistence:** Notion (Single Source of Truth)
-- **Integration:** REST APIs, Webhooks, Messaging Interfaces
+## 👨‍💻 About Me
+I am a **Senior IT Systems Analyst** and **Certified Business Analysis Professional (CBAP®)** with over 10 years of experience in financial systems, consulting, and enterprise process improvement. My unique background combines:
+* **Strategic Thinking:** PMP® and CBAP® certified, ensuring every automation aligns with business value and operational efficiency.
+* **Technical Depth:** Early career in VB.NET/C# development, now specializing in low-code/no-code orchestration via **n8n**.
+* **Platform Expertise:** Certified Salesforce Administrator and Microsoft Azure AI Fundamentals holder.
 
-## 💡 Business Problem
-Content teams often face friction in scaling their output due to:
-- Time-consuming manual re-formatting for different platforms (LinkedIn, Blogs, etc.).
-- Fragmented content storage leading to data silos.
-- High maintenance costs of "monolithic" automation flows that break easily.
+## 🛠️ Core Technical Stack
+* **Workflow Orchestration:** n8n (Advanced Parent-Child patterns, Agentic Workflows)
+* **Data & CRM:** SQL, Salesforce, REST APIs integration
+* **Cloud & AI:** Microsoft Azure AI, OpenAI (GPT-4/RAG)
+* **Legacy & Systems:** VB.NET, C#, Core Banking Systems upgrade experience
 
-## 🏗️ Solution Architecture
-[cite_start]The system is built on a **Decoupled Layered Architecture**[cite: 216, 217]:
-1. **Input Layer:** Captures topics via messaging triggers or automated discovery.
-2. **Processing Layer:** Standardizes AI prompts to ensure consistent brand voice and structure.
-3. [cite_start]**Persistence Layer:** Centralizes all drafts and metadata in Notion for long-term reuse[cite: 215].
-4. [cite_start]**Distribution Layer:** Triggers reusable "Child Workflows" (Adapters) to publish to specific platforms without affecting the core logic[cite: 218].
+## 📂 Featured Projects
+Click on the project titles below to view detailed documentation and workflow files.
 
-## 📈 Key Impact
-- **Efficiency:** Significantly reduced manual effort in content formatting and cross-posting.
-- **Scalability:** New publishing channels (e.g., Twitter, Medium) can be added in minutes via new child workflows without refactoring existing code.
-- **Reliability:** Centralized logging and error handling within the parent workflow ensures 99% uptime of the distribution pipeline.
+### 🤖 [AI-Driven Content Automation](./AI-Content-Automation)
+A modular, scalable system for topic discovery, AI-assisted content generation, and multi-platform publishing.
+* **Key Design:** Decoupled architecture using parent-child workflows for long-term maintainability.
+* **Tech:** n8n, OpenAI, Notion.
 
-## 📄 How to Use
-1. Import the `.json` files from the `/workflow-files` directory into your n8n instance.
-2. Configure your Credentials for OpenAI, Notion, and your social media platforms.
-3. Set up your Notion database using the template provided in `/docs`.
+### ⚡ AI-Powered Personal Workflow Assistant (Coming Soon)
+A conversational AI assistant that centralizes daily productivity tasks and knowledge management.
+* **Key Design:** Integrated messaging interface with RAG-based internal knowledge retrieval.
+* **Tech:** n8n, Slack/Discord, Vector Databases.
+
+---
+
+## 📫 Get in Touch
+I am passionate about using automation and AI to turn complex analysis into real operational impact. Feel free to reach out for collaboration or inquiries:
+
+* **LinkedIn:** [Yu-Ta (Jason) Chuang](https://www.linkedin.com/in/yu-ta-chuang-10115a108)
+* **Email:** yuta.chuang0818@gmail.com
+* **Location:** Taiwan (Relocating to the US - EB-5 Applicant)
