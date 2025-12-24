@@ -1,0 +1,76 @@
+{
+  "name": "AI Personal Assistant (Multimodal)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "assistant-webhook",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-144, -224],
+      "id": "b8616785-7862-4449-a391-e7c8d9cf35e1",
+      "name": "Webhook: LINE Message"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b899bf0c-7d11-4d49-8c3c-4f4484070b44",
+              "name": "userId",
+              "value": "={{ $('Webhook: LINE Message').item.json.body.events[0].source.userId }}",
+              "type": "string"
+            },
+            {
+              "id": "0cf4e3cb-2819-445b-952b-aaaf4b7cc3fe",
+              "name": "message",
+              "value": "={{ $json.chat_input }}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1200, -432],
+      "name": "Data Processing"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message }}",
+        "options": {
+          "systemMessage": "You are an Intent Classifier. Categories: calendar.create, calendar.update, calendar.query, calendar.delete, dictionary.lookup. If the user provides a word or asks 'what does this mean?', classify as dictionary.lookup."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [1424, -432],
+      "name": "Agent: Intent Classifier"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a professional dictionary assistant. Check if the English word spelling is correct. If misspelled, find the most likely correct word. Output the definition, translation, part of speech, and an example sentence in a structured format."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [2128, -624],
+      "name": "Agent: Dictionary Specialist"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a Calendar Manager. Rules: 1) Never fake an action; use tools to execute. 2) Check for conflicts before creating events. 3) Default timezone: Asia/Taipei. Respond concisely."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [2128, -128],
+      "name": "Agent: Calendar Manager"
+    }
+  ]
+}
