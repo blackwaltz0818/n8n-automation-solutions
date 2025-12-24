@@ -1,0 +1,1016 @@
+{
+  "name": "Notion2Public",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -2368,
+        496
+      ],
+      "id": "edbc60ed-cd16-4027-8690-fad3f6345a43",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "IA0zmXegKaSc9Yzg",
+          "mode": "list",
+          "cachedResultName": "Token_Management",
+          "cachedResultUrl": "/projects/tI71NjQA5khE1Nww/datatables/IA0zmXegKaSc9Yzg"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "Platform",
+              "keyValue": "Threads"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        -1248,
+        96
+      ],
+      "id": "3aa30b26-1306-407e-a790-8ec47642fad4",
+      "name": "取得Token"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3708a3b7-4ce9-4335-89b2-b36848813c75",
+              "name": "Token",
+              "value": "={{ $json.Token }}",
+              "type": "string"
+            },
+            {
+              "id": "bb581ad6-cbf5-4d44-a2fc-eb62fde08bac",
+              "name": "threads_id",
+              "value": "24805068685790736",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1024,
+        96
+      ],
+      "id": "8e6bf405-851e-4b6f-9b18-56c6f85cb95f",
+      "name": "儲存參數"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5232c00b-147d-48e3-9962-fb87379003b0",
+              "name": "page_id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "b6f40f87-90bc-41e6-839f-5630ccf6536e",
+              "name": "改寫內容",
+              "value": "={{ $json.properties['改寫內容'].rich_text[0].text.content }}",
+              "type": "string"
+            },
+            {
+              "id": "819509bb-e3d8-447d-9157-f5a0ea40c468",
+              "name": "FB發送時間",
+              "value": "={{ $json.properties['FB發送時間'].date }}",
+              "type": "object"
+            },
+            {
+              "id": "4bf2cc6f-6657-48ef-975d-26526e57523d",
+              "name": "Threads發送時間",
+              "value": "={{ $json.properties['Threads發送時間'].date }}",
+              "type": "string"
+            },
+            {
+              "id": "446860eb-16b1-4f8b-9f33-2c197979b700",
+              "name": "Linkedin發送時間",
+              "value": "={{ $json.properties['Linkedin發送時間'].date }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1920,
+        400
+      ],
+      "id": "3a1f14ff-1650-4713-aaae-4ea5d4265164",
+      "name": "儲存待發送文章"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.threads.net/v1.0/{{ $('儲存參數').item.json.threads_id }}/threads ",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('儲存參數').item.json.Token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "media_type",
+              "value": "TEXT"
+            },
+            {
+              "name": "text",
+              "value": "={{ $('解析多段文字').item.json.text }}"
+            },
+            {
+              "name": "reply_to_id",
+              "value": "={{ $json.reply_to_id || undefined }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        448,
+        -112
+      ],
+      "id": "c0e59b30-ba61-4eac-9ff6-938de2436150",
+      "name": "Threads_建立草稿",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "jsCode": "const content  = $input.first().json.message.content || \"\";\nconst parts = content\n  .split(/---+/g) // 按 '---' 分段，若不同分隔再調整\n  .map(t => t.trim())\n  .filter(Boolean);\n\nconst total = parts.length;\nreturn parts.map((t, i) => {\n  return {\n    json: {\n      text: `${t}\\n(${i + 1}/${total})`\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -448,
+        96
+      ],
+      "id": "08c176b7-b928-49c9-b0a6-550abb7d69af",
+      "name": "解析多段文字"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        0,
+        96
+      ],
+      "id": "ca6eb6ae-2e97-41ab-bc07-af877a545b7e",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        672,
+        -112
+      ],
+      "id": "1eed8650-af82-4545-9a12-5dd733acdf71",
+      "name": "等待草稿",
+      "webhookId": "2e438eba-9e9a-4dc5-a848-0505cdcb8c59"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.threads.net/v1.0/{{ $('儲存參數').item.json.threads_id }}/threads_publish",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "Authentication",
+              "value": "=Bearer {{ $('儲存參數').item.json.Token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "access_token",
+              "value": "={{ $('取得Token').first()?.json?.Token }}"
+            },
+            {
+              "name": "creation_id",
+              "value": "={{ $node[\"Threads_建立草稿\"].json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        896,
+        -112
+      ],
+      "id": "3025c6eb-8c10-4d26-ab49-36edd9109dae",
+      "name": "Threads_正式發布",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "jsCode": "const s = $getWorkflowStaticData('global');\ns.prev_id = undefined;   // 第一次沒有上一則\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -224,
+        96
+      ],
+      "id": "b76e3940-8880-4906-81cd-03720b95ae16",
+      "name": "迴圈前初始化"
+    },
+    {
+      "parameters": {
+        "jsCode": "const s = $getWorkflowStaticData('global');\ns.prev_id = $json.id;    // 正式發布回傳的 post_id\nreturn $input.all();\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        48
+      ],
+      "id": "09a2b90f-f3e7-4149-9dc2-941d47822cf5",
+      "name": "儲存上一則ID"
+    },
+    {
+      "parameters": {
+        "jsCode": "const s = $getWorkflowStaticData('global');\n\nreturn [\n  {\n    json: {\n      reply_to_id: s.prev_id\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        -112
+      ],
+      "id": "e0772f91-5643-430e-82fe-7e642eb6db1b",
+      "name": "取得前一次ID"
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "getAll",
+        "databaseId": {
+          "__rl": true,
+          "value": "28277348-359f-80f4-a34c-ed08295f6945",
+          "mode": "list",
+          "cachedResultName": "Jason文章資料庫",
+          "cachedResultUrl": "https://www.notion.so/28277348359f80f4a34ced08295f6945"
+        },
+        "limit": 1,
+        "simple": false,
+        "filterType": "manual",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "key": "Linkedin發送時間|date",
+              "condition": "is_empty"
+            },
+            {
+              "key": "Threads發送時間|date",
+              "condition": "is_empty"
+            },
+            {
+              "key": "FB發送時間|date",
+              "condition": "is_empty"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        -2144,
+        400
+      ],
+      "id": "c461c2c7-1a30-421b-9d0b-bf1feb34d7a8",
+      "name": "Get many database pages",
+      "credentials": {
+        "notionApi": {
+          "id": "IfXHWlpOUmNjww4Y",
+          "name": "Notion (Jason)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v21.0/883755111479718/feed",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "message",
+              "value": "={{ $('儲存待發送文章').item.json['改寫內容'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        0,
+        592
+      ],
+      "id": "debdfa7b-8833-4e99-949b-9416518e5326",
+      "name": "發送FB文章",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "5FdXGfxWSljQnBNW",
+          "name": "Facebook (Jason)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "person": "2Kns8o80Ku",
+        "text": "={{ $('儲存待發送文章').item.json['改寫內容'] }}",
+        "additionalFields": {
+          "visibility": "PUBLIC"
+        }
+      },
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        0,
+        400
+      ],
+      "id": "cab146e1-8e4f-4d5b-87c5-c6265ca3c10f",
+      "name": "Create a post",
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "cgcgQgPwswd8zHUE",
+          "name": "LinkedIn (Jason)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "update",
+        "pageId": {
+          "__rl": true,
+          "value": "={{ $('儲存待發送文章').item.json.page_id }}",
+          "mode": "id"
+        },
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Threads發送時間|date",
+              "date": "={{\nnew Date().toISOString()\n}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        224,
+        96
+      ],
+      "id": "da2286c8-9c16-4a83-9a88-39f272772723",
+      "name": "更新Notoin_Threads",
+      "credentials": {
+        "notionApi": {
+          "id": "IfXHWlpOUmNjww4Y",
+          "name": "Notion (Jason)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "update",
+        "pageId": {
+          "__rl": true,
+          "value": "={{ $('儲存待發送文章').item.json.page_id }}",
+          "mode": "id"
+        },
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Linkedin發送時間|date",
+              "date": "={{\nnew Date().toISOString()\n}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        224,
+        400
+      ],
+      "id": "10a8a361-d0aa-4afc-b8d2-c14fb6d8890e",
+      "name": "更新Notoin_Linkedin",
+      "credentials": {
+        "notionApi": {
+          "id": "IfXHWlpOUmNjww4Y",
+          "name": "Notion (Jason)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "update",
+        "pageId": {
+          "__rl": true,
+          "value": "={{ $('儲存待發送文章').item.json.page_id }}",
+          "mode": "id"
+        },
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "FB發送時間|date",
+              "date": "={{\nnew Date().toISOString()\n}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        224,
+        592
+      ],
+      "id": "d52175a4-21ef-48c7-8b3b-689864f20bae",
+      "name": "更新Notoin_FB",
+      "credentials": {
+        "notionApi": {
+          "id": "IfXHWlpOUmNjww4Y",
+          "name": "Notion (Jason)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b71f462c-fbcd-4b56-a3c9-5bd96774973f",
+              "leftValue": "={{ $json['Threads發送時間'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -1472,
+        96
+      ],
+      "id": "7889b1fa-72f2-486e-8abd-1b10478f57d1",
+      "name": "Filter_Threads"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b71f462c-fbcd-4b56-a3c9-5bd96774973f",
+              "leftValue": "={{ $json['Linkedin發送時間'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -224,
+        400
+      ],
+      "id": "ea3d7b3e-40b8-42a9-8607-78a59748766f",
+      "name": "Filter_Linkedin"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b71f462c-fbcd-4b56-a3c9-5bd96774973f",
+              "leftValue": "={{ $json['FB發送時間'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -224,
+        592
+      ],
+      "id": "be155b2d-434a-4a95-b95a-a59dd15fc334",
+      "name": "Filter_FB"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=請將以下文章內容根據語氣和段落自然地分段，儘量把文章分成最少的段落，每段不超過 500 字。請保持原文的語氣和風格，只進行分段處理，不要修改內容。在每一段之間插入\"---\"當作換行符號。\n\n文章內容：\n{{ $('儲存待發送文章').item.json['改寫內容'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -800,
+        96
+      ],
+      "id": "e014e9f2-1ab4-4058-acde-57f35eef48bf",
+      "name": "根據內容分段",
+      "credentials": {
+        "openAiApi": {
+          "id": "ubbMdTCfQ0zY4XC3",
+          "name": "OpenAi (Jason)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "chooseBranch",
+        "numberInputs": 3,
+        "output": "empty"
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        448,
+        80
+      ],
+      "id": "9edac2e6-a206-48fb-8725-a2fbcee69890",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "chatId": "8308632587",
+        "text": "流程執行成功",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        672,
+        96
+      ],
+      "id": "e5d53ed9-4ba9-4212-b56d-70e0bc54f59f",
+      "name": "流程執行成功",
+      "webhookId": "49920952-b8dd-4267-af8c-b2b95cfd1c0f",
+      "credentials": {
+        "telegramApi": {
+          "id": "9RXObWO3UQTYlHLQ",
+          "name": "Telegram (Blackwaltz)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash-image-preview",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash-image-preview (Nano Banana)"
+        },
+        "prompt": "=根據輸入的內容：{{ $json['改寫內容'] }}\n產生適合發佈在社群的圖片 \n要簡潔專業且吸睛易懂",
+        "options": {
+          "sampleCount": 1,
+          "binaryPropertyOutput": "data"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        -1696,
+        400
+      ],
+      "id": "7159d8dd-6f29-4dca-a547-2a58d1ecd739",
+      "name": "Generate an image",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "LgEMTt53qGSoPXsB",
+          "name": "Google Gemini(Jason)"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -2368,
+        304
+      ],
+      "id": "6c0c1c80-c44c-4d50-a2b1-511056d4ccd6",
+      "name": "When Executed by Another Workflow"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get many database pages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "取得Token": {
+      "main": [
+        [
+          {
+            "node": "儲存參數",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "儲存參數": {
+      "main": [
+        [
+          {
+            "node": "根據內容分段",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "儲存待發送文章": {
+      "main": [
+        [
+          {
+            "node": "Generate an image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Threads_建立草稿": {
+      "main": [
+        [
+          {
+            "node": "等待草稿",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "解析多段文字": {
+      "main": [
+        [
+          {
+            "node": "迴圈前初始化",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "更新Notoin_Threads",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "取得前一次ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "等待草稿": {
+      "main": [
+        [
+          {
+            "node": "Threads_正式發布",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Threads_正式發布": {
+      "main": [
+        [
+          {
+            "node": "儲存上一則ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "迴圈前初始化": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "儲存上一則ID": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "取得前一次ID": {
+      "main": [
+        [
+          {
+            "node": "Threads_建立草稿",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many database pages": {
+      "main": [
+        [
+          {
+            "node": "儲存待發送文章",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "發送FB文章": {
+      "main": [
+        [
+          {
+            "node": "更新Notoin_FB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a post": {
+      "main": [
+        [
+          {
+            "node": "更新Notoin_Linkedin",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "更新Notoin_Threads": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "更新Notoin_Linkedin": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "更新Notoin_FB": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Filter_Threads": {
+      "main": [
+        [
+          {
+            "node": "取得Token",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter_Linkedin": {
+      "main": [
+        [
+          {
+            "node": "Create a post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter_FB": {
+      "main": [
+        [
+          {
+            "node": "發送FB文章",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "根據內容分段": {
+      "main": [
+        [
+          {
+            "node": "解析多段文字",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "流程執行成功",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "流程執行成功": {
+      "main": [
+        []
+      ]
+    },
+    "Generate an image": {
+      "main": [
+        [
+          {
+            "node": "Filter_Threads",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Filter_Linkedin",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Filter_FB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Get many database pages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Taipei",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionId": "e1912a8f-c496-4181-bc4a-6eae3a64413b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "69027400dd16108b9045762c1ec7a026e2668afe1165bbd00b0f9a22bbb39009"
+  },
+  "id": "379rCPBTMbbpvnLl",
+  "tags": []
+}
