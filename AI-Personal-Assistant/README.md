@@ -11,6 +11,7 @@ A comprehensive AI assistant integrated with LINE, designed to handle multimodal
 * **Security Layer:** Includes a specialized node to verify User Identity, ensuring data privacy for the account owner.
 
 ## 🏗️ Technical Workflow
+![AI-Personal-Assistant](./AI-Personal-Assistant.jpg)
 1. **Entry:** Webhook receives LINE events.
 2. **Security:** Identity Verification node filters unauthorized users.
 3. **Input Adaptation:** Converts voice/images into text-based prompts.
