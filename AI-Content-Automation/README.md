@@ -10,6 +10,9 @@ Designed and implemented an end-to-end content automation system that streamline
 * **Standardized AI Output:** Implemented event-driven workflows with prompt standardization to ensure consistent brand voice across platforms.
 
 ## 🏗️ Solution Architecture
+![AI-Driven Content Automation Architecture](./architecture-flow.jpg)
+
+*This diagram illustrates the high-level orchestration, highlighting the decoupled design and the use of sub-workflows for multi-platform distribution.*
 1. **Input Layer:** Topic submission via messaging interface and automated discovery.
 2. **Processing Layer:** AI-based content rewriting with standardized prompt engineering.
 3. **Orchestration Layer:** Parent workflow managing the lifecycle and triggering specific child workflows.
