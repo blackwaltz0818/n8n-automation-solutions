@@ -4,6 +4,7 @@
 [![Dify](https://img.shields.io/badge/AI_Orchestration-Dify-00D1B2?style=flat)](https://dify.ai/)
 [![Gemini 3](https://img.shields.io/badge/Model-Gemini_3_Flash_Preview-4285F4?style=flat&logo=google-gemini)](https://deepmind.google/technologies/gemini/)
 
+## 🚀 Project Overview
 A professional, production-ready AI automation workflow that integrates **Line Messaging API**, **n8n**, and **Dify AI** to provide a seamless customer service experience with long-term memory and advanced reasoning capabilities.
 
 ---
@@ -27,8 +28,6 @@ A professional, production-ready AI automation workflow that integrates **Line M
 
 ## 🏗️ System Architecture
 
-
-
 1.  **User Interface**: Line Messaging API (Webhook).
 2.  **Orchestrator**: n8n (Handles logic, state lookup, and formatting).
 3.  **AI Engine**: Dify AI (Gemini 3 Flash Preview + RAG).
@@ -43,6 +42,11 @@ A professional, production-ready AI automation workflow that integrates **Line M
 * **LLM**: Google Gemini 3 Flash Preview
 * **Messaging Platform**: Line Messaging API
 * **Data Persistence**: Google Sheets API
+
+---
+
+## 🏗️ Solution Architecture
+![AI-Driven Content Automation Architecture](./AI-Powered%20Customer%20Service%20Bot.png)
 
 ---
 
