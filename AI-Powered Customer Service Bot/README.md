@@ -47,8 +47,3 @@ A professional, production-ready AI automation workflow that integrates **Line M
 
 ## 🏗️ Solution Architecture
 ![AI-Driven Content Automation Architecture](./AI-Powered%20Customer%20Service%20Bot.png)
-
----
-
-## 📝 License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
