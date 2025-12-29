@@ -1,0 +1,760 @@
+{
+  "name": "VisionEdge_AI_Customer_Service_Bot",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b899bf0c-7d11-4d49-8c3c-4f4484070b44",
+              "name": "userId",
+              "value": "={{ $('Line_Webhook').item.json.body.events[0].source.userId }}",
+              "type": "string"
+            },
+            {
+              "id": "0cf4e3cb-2819-445b-952b-aaaf4b7cc3fe",
+              "name": "message",
+              "value": "={{ $json.chat_input }}",
+              "type": "string"
+            },
+            {
+              "id": "12b3e009-52e7-4109-8b76-85fc8b15ef0b",
+              "name": "replyToken",
+              "value": "={{ $('Line_Webhook').item.json.body.events[0].replyToken }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1200,
+        208
+      ],
+      "id": "f1e9dc40-42d2-4ee1-9e16-8b0470678a51",
+      "name": "Data_Formatting"
+    },
+    {
+      "parameters": {
+        "url": "=https://api-data.line.me/v2/bot/message/{{ $('Line_Webhook').item.json.body.events[0].message.id }}/content",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1872,
+        208
+      ],
+      "id": "575d75c4-9aa9-4a36-b759-c57003d706e1",
+      "name": "Get_Voice_File",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "YOUR_LINE_AUTH_ID",
+          "name": "Line_Messaging_API_Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a247caf0-3073-4c33-b7ff-ce8d89322bbc",
+              "name": "chat_input",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "28c2095f-aaaa-4e1f-883d-be854940d92e",
+              "name": "type",
+              "value": "voice",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1424,
+        208
+      ],
+      "id": "0b98bd55-21e7-4ac5-9d3b-8669ce6f234e",
+      "name": "Set_Voice_Text"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "translate",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -1648,
+        208
+      ],
+      "id": "cc60f4e5-7ebf-4df6-8476-d2a44f30dac9",
+      "name": "Transcribe_Audio",
+      "credentials": {
+        "openAiApi": {
+          "id": "YOUR_OPENAI_AUTH_ID",
+          "name": "OpenAI_API_Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f9ff6579-5b32-4f27-9cda-911360bc96ac",
+              "name": "chat_input",
+              "value": "={{ $json.body.events[0].message.text }}",
+              "type": "string"
+            },
+            {
+              "id": "dab447df-0177-4623-8b50-d450450da5f3",
+              "name": "type",
+              "value": "text",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1424,
+        16
+      ],
+      "id": "2f894456-a418-43e1-98c9-f7551166817e",
+      "name": "Set_Input_Text"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "YOUR_WEBHOOK_PATH",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -2320,
+        208
+      ],
+      "id": "a45226ea-5ec5-4abd-8165-60d8b585da93",
+      "name": "Line_Webhook"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list"
+        },
+        "text": "Extract all text from the image and output the result.",
+        "inputType": "base64",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -1648,
+        400
+      ],
+      "id": "48cfe51d-395d-427e-8640-f11c860d2fe9",
+      "name": "OCR_Image",
+      "credentials": {
+        "openAiApi": {
+          "id": "YOUR_OPENAI_AUTH_ID",
+          "name": "OpenAI_API_Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a247caf0-3073-4c33-b7ff-ce8d89322bbc",
+              "name": "chat_input",
+              "value": "={{ $json.content }}",
+              "type": "string"
+            },
+            {
+              "id": "cc232845-a6b0-4b29-8337-6c03687f9733",
+              "name": "type",
+              "value": "image",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1424,
+        400
+      ],
+      "id": "ff024203-3b11-430c-be30-c91614682b90",
+      "name": "Set_Image_Text"
+    },
+    {
+      "parameters": {
+        "url": "=https://api-data.line.me/v2/bot/message/{{ $json.body.events[0].message.id }}/content",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1872,
+        400
+      ],
+      "id": "a47f1bac-ad27-45a9-a03f-abb43a9e772a",
+      "name": "Get_Image_File",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "YOUR_LINE_AUTH_ID",
+          "name": "Line_Messaging_API_Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.dify.ai/v1/chat-messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"inputs\": {},\n    \"query\": \"{{ $('Data_Formatting').item.json.message }}\",\n    \"response_mode\": \"blocking\",\n    \"user\": \"{{ $('Data_Formatting').item.json.userId }}\",\n    \"conversation_id\": \"{{ $node[\\\"Lookup_Session_ID\\\"].json[\\\"conversation_id\\\"] || \\\"\\\" }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -752,
+        208
+      ],
+      "id": "1dcd732e-c13e-467b-9da0-fd98f5d901f9",
+      "name": "Invoke_Dify_AI",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "YOUR_DIFY_AUTH_ID",
+          "name": "Dify_Header_Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.events[0].message.type }}",
+                    "rightValue": "text",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "01289bae-2766-406c-9672-e91185aec42c"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "text"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "9bbfa5e0-8117-4ec1-bf25-bbcea1859bf0",
+                    "leftValue": "={{ $json.body.events[0].message.type }}",
+                    "rightValue": "audio",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "audio"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "03358576-61be-4515-8b6e-341289b00d61",
+                    "leftValue": "={{ $json.body.events[0].message.type }}",
+                    "rightValue": "image",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "image"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -2096,
+        192
+      ],
+      "id": "94a9438b-e5d1-44d4-860a-a2487e5df005",
+      "name": "Switch_Message_Type"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.line.me/v2/bot/message/reply",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{\n{\n  \"replyToken\": $('Data_Formatting').item.json.replyToken,\n  \"messages\": [\n    {\n      \"type\": \"text\",\n      \"text\": $('Invoke_Dify_AI').item.json.answer.replace(/<think>[\\s\\S]*?<\\/think>/g, '').trim()\n    }\n  ]\n}\n}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -80,
+        208
+      ],
+      "id": "478b9405-487d-48df-8e74-bd273d4faf45",
+      "name": "Send_Line_Response",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "YOUR_LINE_AUTH_ID",
+          "name": "Line_Messaging_API_Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_SPREADSHEET_ID",
+          "mode": "list"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "userId",
+              "lookupValue": "={{ $json.userId }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -976,
+        208
+      ],
+      "id": "9d177767-492e-4949-b93e-fb0e3c8d98b5",
+      "name": "Lookup_Session_ID",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleApi": {
+          "id": "YOUR_GOOGLE_AUTH_ID",
+          "name": "Google_Sheets_API_Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_SPREADSHEET_ID",
+          "mode": "list"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "userId": "={{ $('Data_Formatting').item.json.userId }}",
+            "conversation_id": "={{ $('Invoke_Dify_AI').item.json.conversation_id }}",
+            "updatedAt": "={{ $now.format('yyyy-MM-dd HH:mm:ss') }}"
+          },
+          "matchingColumns": [
+            "userId"
+          ],
+          "schema": [
+            {
+              "id": "userId",
+              "displayName": "userId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "conversation_id",
+              "displayName": "conversation_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "updatedAt",
+              "displayName": "updatedAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -528,
+        208
+      ],
+      "id": "f5824316-9a87-40af-a945-34e7e4561ba4",
+      "name": "Update_Session_ID",
+      "credentials": {
+        "googleApi": {
+          "id": "YOUR_GOOGLE_AUTH_ID",
+          "name": "Google_Sheets_API_Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_SPREADSHEET_ID",
+          "mode": "list"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=12345678",
+          "mode": "list"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "timestamp": "={{ $now.format('yyyy-MM-dd HH:mm:ss') }}",
+            "userId": "={{ $('Data_Formatting').item.json.userId }}",
+            "userQuery": "={{ $('Data_Formatting').item.json.message }}",
+            "aiAnswer": "={{ $('Invoke_Dify_AI').item.json.answer }}",
+            "conversationId": "={{ $('Invoke_Dify_AI').item.json.conversation_id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "userId",
+              "displayName": "userId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "userQuery",
+              "displayName": "userQuery",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "aiAnswer",
+              "displayName": "aiAnswer",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "conversationId",
+              "displayName": "conversationId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -304,
+        208
+      ],
+      "id": "a9ea2238-dfc2-4162-8c1f-805a82794b42",
+      "name": "Log_Conversation",
+      "credentials": {
+        "googleApi": {
+          "id": "YOUR_GOOGLE_AUTH_ID",
+          "name": "Google_Sheets_API_Auth"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Data_Formatting": {
+      "main": [
+        [
+          {
+            "node": "Lookup_Session_ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get_Voice_File": {
+      "main": [
+        [
+          {
+            "node": "Transcribe_Audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set_Voice_Text": {
+      "main": [
+        [
+          {
+            "node": "Data_Formatting",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe_Audio": {
+      "main": [
+        [
+          {
+            "node": "Set_Voice_Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set_Input_Text": {
+      "main": [
+        [
+          {
+            "node": "Data_Formatting",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Line_Webhook": {
+      "main": [
+        [
+          {
+            "node": "Switch_Message_Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OCR_Image": {
+      "main": [
+        [
+          {
+            "node": "Set_Image_Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set_Image_Text": {
+      "main": [
+        [
+          {
+            "node": "Data_Formatting",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get_Image_File": {
+      "main": [
+        [
+          {
+            "node": "OCR_Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch_Message_Type": {
+      "main": [
+        [
+          {
+            "node": "Set_Input_Text",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get_Voice_File",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get_Image_File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Invoke_Dify_AI": {
+      "main": [
+        [
+          {
+            "node": "Update_Session_ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lookup_Session_ID": {
+      "main": [
+        [
+          {
+            "node": "Invoke_Dify_AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update_Session_ID": {
+      "main": [
+        [
+          {
+            "node": "Log_Conversation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log_Conversation": {
+      "main": [
+        [
+          {
+            "node": "Send_Line_Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "UTC"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": []
+}
