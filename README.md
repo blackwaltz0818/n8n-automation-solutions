@@ -27,6 +27,11 @@ A cross-platform AI agent integrated with LINE that centralizes productivity and
 * **Key Design:** Multimodal processing (Voice-to-Text & OCR) with Agentic tool use for smart calendar orchestration.
 * **Tech:** n8n, LINE API, OpenAI (GPT-4o Vision & Whisper), Google Calendar (MCP), Notion.
 
+### 🤖 [Enterprise AI Customer Service Solution](./AI-Powered%20Customer%20Service%20Bot)
+A high-precision AI support system featuring advanced reasoning and stateful long-term memory for business-scale interactions.
+* **Key Design:** Implemented an external Session Map architecture (Google Sheets) for persistent conversation context and automated filtering for reasoning-model outputs.
+* **Tech:** n8n, Dify AI, Google Gemini 3 (Reasoning), Google Sheets API, LINE Messaging API.
+
 ---
 
 ## 📫 Get in Touch
