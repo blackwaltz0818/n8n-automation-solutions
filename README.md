@@ -8,6 +8,13 @@ This repository is my automation portfolio: client case studies, production syst
 
 ## Client Work
 
+### Content automation system for a career consultancy (n8n)
+
+A US semiconductor career consultancy (PhD physicist, ex-AMD/TSMC) was moving content between LINE, Notion, and Threads by hand. I built a 12-task automation system covering the whole path — LINE→Notion capture, AI-drafted posts via API, Threads auto-publishing driven by Notion status, and automated weekly reporting back into Notion — plus the n8n environment it runs on.
+
+> *"He thinks in systems — turns ideas into scalable systems."*
+> — the client, in a LinkedIn recommendation
+
 ### Lead-intake triage (n8n + Claude)
 
 A UK catering business (via an agency partner) was triaging website-form leads by hand — slow enough to lose customers. I built an n8n + Claude workflow that qualifies each lead and drafts the response automatically, with a human-approval gate before anything reaches the customer. Delivered with test payloads and validated across four routing paths; the client's rollout stalled on their side before go-live.
@@ -16,7 +23,7 @@ A UK catering business (via an agency partner) was triaging website-form leads b
 
 ### AI-visibility (GEO) audit: finding the real problem
 
-The same client believed their website was invisible to AI assistants (a tool reported 0% visibility). My diagnosis showed their robots.txt wasn't blocking anything — the real gaps were missing schema fields, an outdated address, and absent business metadata. Delivered a prioritized fix list with a competitor comparison instead of an unnecessary rebuild. Agency feedback: *"super useful when pitching."*
+The same catering client believed their website was invisible to AI assistants (a tool reported 0% visibility). My diagnosis showed their robots.txt wasn't blocking anything — the real gaps were missing schema fields, an outdated address, and absent business metadata. Delivered a prioritized fix list with a competitor comparison instead of an unnecessary rebuild. Agency feedback: *"super useful when pitching."*
 
 ### Daily AI content pipeline
 
