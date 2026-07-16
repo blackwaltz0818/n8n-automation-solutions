@@ -6,11 +6,11 @@ This repository is my automation portfolio: client case studies, production syst
 
 **Try my work live:** [jasonchuang.com](https://jasonchuang.com) — an AI lead qualifier you can test yourself (Next.js · Claude · Supabase · Stripe). BANT scoring with hot / warm / cold routing and human-review gates — the same kind of system I build for clients.
 
-## Client Results
+## Client Work
 
-### Lead-intake triage: 48 hours → 2 minutes
+### Lead-intake triage (n8n + Claude)
 
-A UK catering business (via an agency partner) had website-form leads waiting up to 48 hours for a manual reply — slow enough to lose customers. I built an n8n + Claude workflow that qualifies each lead and drafts the response automatically, with a human-approval gate before anything reaches the customer.
+A UK catering business (via an agency partner) was triaging website-form leads by hand — slow enough to lose customers. I built an n8n + Claude workflow that qualifies each lead and drafts the response automatically, with a human-approval gate before anything reaches the customer. Delivered with test payloads and validated across four routing paths; the client's rollout stalled on their side before go-live.
 
 [Watch the 5-minute walkthrough (Loom)](https://www.loom.com/share/7a518d7d2def405c802838cd039ecab8)
 
