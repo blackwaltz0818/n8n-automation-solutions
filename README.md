@@ -8,6 +8,10 @@ This repository is my automation portfolio: client case studies, production syst
 
 ## Client Work
 
+### Company knowledge assistant from 20 years of documents (Claude)
+
+A consulting firm's 20 years of project files (800K tokens) became an assistant their team can question in plain language. Answers cite the exact page, and the system says "no record" instead of guessing — verified with adversarial test questions before the client demo.
+
 ### Content automation system for a career consultancy (n8n)
 
 A US semiconductor career consultancy (PhD physicist, ex-AMD/TSMC) was moving content between LINE, Notion, and Threads by hand. I built a 12-task automation system covering the whole path — LINE→Notion capture, AI-drafted posts via API, Threads auto-publishing driven by Notion status, and automated weekly reporting back into Notion — plus the n8n environment it runs on.
